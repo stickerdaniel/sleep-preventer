@@ -13,10 +13,12 @@ A tiny macOS menubar app that keeps your Mac awake for a fixed amount of time, t
 ## Install
 
 ```bash
-git clone https://github.com/stickerdaniel/sleep-preventer ~/Documents/development/sleep-preventer
-cd ~/Documents/development/sleep-preventer
+git clone https://github.com/stickerdaniel/sleep-preventer.git
+cd sleep-preventer
 ./scripts/install.sh
 ```
+
+Clone anywhere you like — the installer builds in `.build/` next to the source and copies the binary to `/usr/local/bin/`, so the source directory location doesn't matter.
 
 The installer will:
 
