@@ -67,6 +67,10 @@ struct MenuContent: View {
 
             Divider()
 
+            statusSection
+
+            Divider()
+
             HStack {
                 Button("+15 min") {
                     appState.addQuarterHour()
@@ -96,6 +100,28 @@ struct MenuContent: View {
         }
         .padding()
         .frame(width: 240)
+        .onAppear { appState.refreshStatus() }
+    }
+
+    private var statusSection: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            StatusRow(
+                label: "System sleep",
+                value: appState.systemSleepDisabled ? "Blocked" : "Normal",
+                active: appState.systemSleepDisabled
+            )
+            StatusRow(
+                label: "Display",
+                value: appState.displayAssertionHeld ? "Staying awake" : "Normal",
+                active: appState.displayAssertionHeld
+            )
+            StatusRow(
+                label: "Lid",
+                value: appState.isLidClosed ? "Closed" : "Open",
+                active: false,
+                neutral: true
+            )
+        }
     }
 
     private var headlineText: String {
@@ -122,5 +148,27 @@ struct MenuContent: View {
             return String(format: "%d:%02d:%02d", hours, minutes, secs)
         }
         return String(format: "%d:%02d", minutes, secs)
+    }
+}
+
+struct StatusRow: View {
+    let label: String
+    let value: String
+    let active: Bool
+    var neutral: Bool = false
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Circle()
+                .fill(neutral ? Color.secondary : (active ? Color.green : Color.secondary))
+                .frame(width: 6, height: 6)
+            Text(label)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Spacer(minLength: 8)
+            Text(value)
+                .font(.caption)
+                .foregroundStyle(active ? .primary : .secondary)
+        }
     }
 }

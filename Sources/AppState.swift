@@ -13,6 +13,10 @@ final class AppState {
     var errorMessage: String? = nil
     var startGeneration: Int = 0
 
+    // Verified ground-truth status, refreshed when the menu opens.
+    var systemSleepDisabled: Bool = false
+    var displayAssertionHeld: Bool = false
+
     private var sleepController: SleepController?
     private var lidMonitor: LidMonitor?
     private var tickTimer: Timer?
@@ -130,6 +134,20 @@ final class AppState {
         invalidateTickTimer()
         lidMonitor?.stop()
         sleepController?.forceAllowSleepSync()
+    }
+
+    /// Reads the real system state (pmset + IOKit assertion) off-main and publishes it.
+    /// Called when the menu opens so the status rows reflect ground truth, not just belief.
+    func refreshStatus() {
+        guard let sc = sleepController else { return }
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            let sysDisabled = sc.readSystemSleepDisabled()
+            let displayHeld = sc.isDisplayAssertionHeld
+            DispatchQueue.main.async {
+                self?.systemSleepDisabled = sysDisabled
+                self?.displayAssertionHeld = displayHeld
+            }
+        }
     }
 
     // MARK: - Private
