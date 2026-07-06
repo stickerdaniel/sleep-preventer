@@ -12,6 +12,7 @@ struct SleepPreventerApp: App {
             Image(systemName: appDelegate.appState.sleepPrevented ? "bolt.fill" : "bolt.slash")
                 .symbolRenderingMode(.hierarchical)
         }
+        .menuBarExtraStyle(.window)
     }
 }
 
